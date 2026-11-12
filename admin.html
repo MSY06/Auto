@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AUTO ELITE — لوحة التحكم</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f8fa;--white:#fff;--line:#eceef2;--line2:#e2e5eb;
+  --ink:#14181f;--ink2:#3a4150;--muted:#848c9c;
+  --accent:#ff6a1a;--accent-soft:#fff1e8;--accent-d:#e5540a;
+  --gold:#f5b942;--ok:#16a34a;--red:#ef4444;
+  --shadow:0 4px 18px rgba(20,24,31,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Tajawal,sans-serif}
+body{background:var(--bg);color:var(--ink);padding-bottom:60px;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font-family:inherit;outline:none;border:none}
+button{cursor:pointer}
+a{text-decoration:none;color:inherit}
+
+/* Login */
+.login{position:fixed;inset:0;background:radial-gradient(circle at 50% 20%,#fff7f2,#f7f8fa);display:none;align-items:center;justify-content:center;z-index:500;padding:20px}
+.login .box{background:#fff;border:1px solid var(--line);border-radius:22px;padding:36px 28px;width:100%;max-width:400px;text-align:center;box-shadow:0 24px 60px rgba(20,24,31,.1)}
+.login h1{font-size:24px;margin-bottom:6px;font-weight:900}.login h1 span{color:var(--accent)}
+.login p{color:var(--muted);font-size:13px;margin-bottom:24px}
+.login input{width:100%;padding:13px 16px;border-radius:12px;border:1px solid var(--line2);background:#f7f8fa;color:var(--ink);font-size:15px;margin-bottom:12px;text-align:center;cursor:text}
+.login input:focus{background:#fff;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.login button{width:100%;padding:14px;border-radius:12px;background:var(--accent);color:#fff;font-weight:800;font-size:15px}
+.login button:hover{background:var(--accent-d)}
+.back-link{display:inline-flex;align-items:center;gap:6px;margin-top:18px;color:var(--accent);font-size:13px;font-weight:700;padding:8px 16px;border:1px solid var(--line2);border-radius:999px;transition:.2s}
+.back-link:hover{background:var(--accent-soft)}
+.err{color:var(--red);font-size:13px;min-height:18px;margin-top:6px}
+
+/* Topbar */
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50;background:rgba(255,255,255,.95);backdrop-filter:blur(10px);flex-wrap:wrap;gap:10px}
+.brand{font-weight:900;font-size:19px}.brand span{color:var(--accent)}
+.topbar .r{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn{padding:10px 16px;border-radius:11px;background:var(--accent);color:#fff;font-weight:800;font-size:13.5px;white-space:nowrap;transition:.2s;display:inline-flex;align-items:center;gap:5px}
+.btn:hover{background:var(--accent-d)}
+.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line2)}
+.btn.ghost:hover{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.btn.danger{background:#fef2f2;color:var(--red);border:1px solid #fecaca}
+.btn.danger:hover{background:var(--red);color:#fff}
+.btn.sm{padding:6px 11px;font-size:12px;border-radius:9px}
+.shell{max-width:1300px;margin:0 auto;padding:20px}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:20px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+.stat::before{content:"";position:absolute;top:0;right:0;width:4px;height:100%;background:var(--accent)}
+.stat .l{font-size:12.5px;color:var(--muted);margin-bottom:6px;font-weight:600}
+.stat b{font-size:24px;color:var(--ink);display:block;font-weight:900}
+.stat.warn::before{background:var(--gold)}.stat.warn b{color:#c8870a}
+.stat.info::before{background:#3b82f6}.stat.info b{color:#2563eb}
+.stat.ok::before{background:var(--ok)}.stat.ok b{color:var(--ok)}
+
+/* Tabs */
+.tabs{display:flex;gap:8px;margin-bottom:18px;overflow-x:auto;padding-bottom:4px}
+.tab-btn{padding:11px 18px;border-radius:12px;background:#fff;border:1px solid var(--line2);color:var(--muted);font-weight:700;font-size:13.5px;white-space:nowrap;transition:.2s}
+.tab-btn:hover{color:var(--accent);border-color:var(--accent)}
+.tab-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.tab{display:none}.tab.active{display:block}
+
+/* Form */
+.pform{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px;margin-bottom:20px;box-shadow:var(--shadow)}
+.fh{font-weight:800;font-size:15px;margin-bottom:16px;color:var(--accent);display:flex;align-items:center;gap:8px}
+.frow{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.frow input,.frow select,.frow textarea{width:100%;padding:11px 13px;border-radius:10px;border:1px solid var(--line2);background:#f7f8fa;color:var(--ink);font-size:13.5px;cursor:text}
+.frow select{cursor:pointer}
+.frow input:focus,.frow select:focus,.frow textarea:focus{background:#fff;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.frow input[type=file]{padding:8px;font-size:12px;color:var(--muted);cursor:pointer;background:#fff}
+.frow input::placeholder,.frow textarea::placeholder{color:#a8b0bf}
+.factions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px;align-items:center}
+#imgPreview img{width:46px;height:46px;object-fit:cover;border-radius:10px;border:2px solid var(--accent-soft)}
+.chk{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ink2);padding:11px 0;font-weight:600}
+.chk input{width:18px;height:18px;accent-color:var(--accent);cursor:pointer}
+
+/* Table */
+.tablewrap{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
+.thead{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid var(--line);gap:10px;flex-wrap:wrap}
+.thead h3{font-size:15px;font-weight:800}
+.thead input{padding:9px 14px;border-radius:10px;border:1px solid var(--line2);background:#f7f8fa;color:var(--ink);font-size:13px;min-width:180px;cursor:text}
+.thead input:focus{background:#fff;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+table{width:100%;border-collapse:collapse}
+th,td{padding:12px 14px;text-align:right;font-size:13px;border-bottom:1px solid var(--line)}
+th{background:#f7f8fa;color:var(--muted);font-weight:700;font-size:12px;white-space:nowrap}
+tbody tr:last-child td{border-bottom:none}tbody tr:hover{background:#fff9f5}
+.td-img{width:44px;height:36px;border-radius:9px;overflow:hidden;background:#f1f3f6;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;position:relative}
+.td-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.badge{padding:4px 10px;border-radius:999px;font-size:11.5px;font-weight:800;background:#f1f3f6;color:var(--ink2)}
+.badge.ok{background:#dcfce7;color:#166534}.badge.warn{background:#fef3c7;color:#92400e}.badge.bad{background:#fee2e2;color:#991b1b}
+select.status{background:#f7f8fa;color:var(--ink);border:1px solid var(--line2);border-radius:8px;padding:6px 9px;font-size:12px;cursor:pointer}
+select.status:focus{border-color:var(--accent)}
+.empty-row{text-align:center;color:var(--muted);padding:34px}
+
+/* Toasts */
+#toasts{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:900;display:flex;flex-direction:column;gap:8px;align-items:center;width:max-content;max-width:90vw}
+.toast{background:#14181f;color:#fff;padding:12px 22px;border-radius:999px;font-size:13.5px;font-weight:700;box-shadow:0 12px 34px rgba(0,0,0,.25)}
+.toast.ok{background:var(--ok)}.toast.err{background:var(--red)}
+.hidden{display:none!important}
+</style></head><body>
+
+<div class="login" id="login">
+  <form class="box" id="loginForm">
+    <h1>AUTO <span>ELITE</span></h1>
+    <p>سجّل الدخول للوصول إلى لوحة التحكم</p>
+    <input id="pw" type="password" placeholder="كلمة المرور" autocomplete="current-password" autofocus>
+    <button type="submit">دخول</button>
+    <div class="err" id="loginErr"></div>
+    <a href="index.html" class="back-link">← العودة إلى المتجر</a>
+  </form>
+</div>
+
+<div id="app" class="hidden">
+  <div class="topbar">
+    <div class="brand">AUTO <span>ELITE</span> · Admin</div>
+    <div class="r">
+      <a class="btn ghost sm" href="index.html">🏪 المتجر</a>
+      <button class="btn ghost sm" onclick="exportCSV('cars')">📥 السيارات</button>
+      <button class="btn ghost sm" onclick="exportCSV('bookings')">📥 الحجوزات</button>
+      <button class="btn danger sm" onclick="logout()">خروج</button>
+    </div>
+  </div>
+
+  <div class="shell">
+    <div class="stats" id="stats"></div>
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="cars">🚗 السيارات</button>
+      <button class="tab-btn" data-tab="bookings">🧾 الحجوزات</button>
+      <button class="tab-btn" data-tab="settings">⚙️ الإعدادات</button>
+    </div>
+
+    <section class="tab active" id="tab-cars">
+      <form class="pform" id="cForm">
+        <div class="fh" id="formTitle">➕ إضافة سيارة جديدة</div>
+        <div class="frow">
+          <input id="cName" placeholder="اسم السيارة *" required>
+          <input id="cBrand" placeholder="الماركة *" required list="brandList"><datalist id="brandList"></datalist>
+          <input id="cModel" placeholder="الموديل">
+          <input id="cYear" type="number" min="1990" max="2026" placeholder="سنة الصنع *" required>
+          <input id="cPrice" type="number" step="1000" min="0" placeholder="السعر (أوقية) *" required>
+          <input id="cOld" type="number" step="1000" min="0" placeholder="السعر قبل الخصم (أوقية)">
+          <input id="cMileage" type="number" min="0" placeholder="المسافة المقطوعة (كم)" value="0">
+          <select id="cFuel"><option>بنزين</option><option>ديزل</option><option>كهرباء</option><option>هجين</option></select>
+          <select id="cTrans"><option>أوتوماتيك</option><option>يدوي</option></select>
+          <input id="cColor" placeholder="اللون">
+          <select id="cCond"><option value="new">جديد</option><option value="used">مستعمل</option></select>
+          <select id="cStatus"><option value="available">متاح</option><option value="reserved">محجوز</option><option value="sold">مباع</option></select>
+          <input id="cRate" type="number" step="0.1" min="0" max="5" placeholder="التقييم" value="4.5">
+          <input id="cEmoji" placeholder="إيموجي" value="🚗" maxlength="4">
+          <input id="cImg" placeholder="رابط صورة (اختياري)">
+          <input id="cImgFile" type="file" accept="image/*">
+        </div>
+        <div class="frow" style="margin-top:10px">
+          <textarea id="cDesc" placeholder="وصف قصير للسيارة" rows="2" style="grid-column:1/-1"></textarea>
+          <input id="cFeatures" placeholder="المزايا (مفصولة بفاصلة): مقاعد جلد, شاشة, كاميرا..." style="grid-column:1/-1">
+        </div>
+        <label class="chk"><input type="checkbox" id="cFeat"> سيارة مميزة ⭐</label>
+        <div class="factions">
+          <span id="imgPreview"></span>
+          <button type="button" class="btn ghost" onclick="cancelEdit()">إلغاء</button>
+          <button type="submit" class="btn" id="saveBtn">حفظ السيارة</button>
+        </div>
+      </form>
+
+      <div class="tablewrap">
+        <div class="thead"><h3>🚗 قائمة السيارات</h3><input id="cSearch" placeholder="بحث..."></div>
+        <div style="overflow:auto"><table><thead><tr><th>#</th><th>السيارة</th><th>الماركة</th><th>السنة</th><th>السعر</th><th>الحالة</th><th>إجراءات</th></tr></thead><tbody id="cBody"></tbody></table></div>
+      </div>
+    </section>
+
+    <section class="tab" id="tab-bookings">
+      <div class="tablewrap">
+        <div class="thead"><h3>🧾 حجوزات تجربة القيادة</h3><input id="bSearch" placeholder="بحث بالاسم أو الهاتف..."></div>
+        <div style="overflow:auto"><table><thead><tr><th>#</th><th>العميل</th><th>الهاتف</th><th>السيارة</th><th>التاريخ المفضل</th><th>الحالة</th><th>التاريخ</th><th></th></tr></thead><tbody id="bBody"></tbody></table></div>
+      </div>
+    </section>
+
+    <section class="tab" id="tab-settings">
+      <form class="pform" id="sForm" style="max-width:640px">
+        <div class="fh">⚙️ إعدادات المعرض</div>
+        <div class="frow">
+          <input id="sName" placeholder="اسم المعرض">
+          <input id="sCurrency" placeholder="العملة (افتراضي: أوقية)">
+          <input id="sWhatsapp" placeholder="رقم واتساب">
+          <input id="sPhone" placeholder="رقم الهاتف">
+          <input id="sAddress" placeholder="العنوان">
+        </div>
+        <div class="factions"><button class="btn" type="submit">حفظ الإعدادات</button></div>
+      </form>
+    </section>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<script>
+/* ═════════ Shared API (same keys as index.html) ═════════ */
+const LS={cars:'autoelite_cars_v1',bookings:'autoelite_bookings_v1',settings:'autoelite_settings_v1'};
+const DEFAULT_SETTINGS={storeName:'AUTO ELITE',currency:'أوقية',whatsapp:'22230000000',phone:'+222 30 00 00 00',address:'نواكشوط — موريتانيا'};
+const load=(k,f)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):f}catch(e){return f}};
+const saveLS=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+if(!localStorage.getItem(LS.settings))saveLS(LS.settings,DEFAULT_SETTINGS);
+const API={
+  cars:{list:()=>load(LS.cars,[]),create:c=>{const a=load(LS.cars,[]);const id=Math.max(0,...a.map(x=>x.id))+1;const n={...c,id};a.unshift(n);saveLS(LS.cars,a);return n},
+        update:(id,c)=>{const a=load(LS.cars,[]);const i=a.findIndex(x=>x.id==id);if(i>-1){a[i]={...a[i],...c};saveLS(LS.cars,a)}return a[i]},
+        remove:id=>{const a=load(LS.cars,[]).filter(x=>x.id!=id);saveLS(LS.cars,a)}},
+  bookings:{list:()=>load(LS.bookings,[]),update:(id,p)=>{const a=load(LS.bookings,[]);const i=a.findIndex(x=>x.id==id);if(i>-1){a[i]={...a[i],...p};saveLS(LS.bookings,a)}},
+        remove:id=>{const a=load(LS.bookings,[]).filter(x=>x.id!=id);saveLS(LS.bookings,a)}},
+  settings:{get:()=>load(LS.settings,DEFAULT_SETTINGS),save:s=>{saveLS(LS.settings,s);return s}}
+};
+/* ═════════ Admin logic ═════════ */
+let CARS=[],BOOKINGS=[],SETTINGS={},EDIT_ID=null;
+const ADMIN_PW='admin123';
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=n=>Number(n||0).toLocaleString('en-US')+' '+(SETTINGS.currency||'أوقية');
+function toast(m,t){const e=document.createElement('div');e.className='toast '+(t||'');e.textContent=m;$('toasts').appendChild(e);setTimeout(()=>{e.style.opacity=0;e.style.transition='.3s';setTimeout(()=>e.remove(),300)},2200)}
+
+function boot(){
+  SETTINGS=API.settings.get();
+  if(sessionStorage.getItem('autoelite_auth')==='1'){showApp()}else{$('login').style.display='flex'}
+}
+
+$('loginForm').onsubmit=e=>{
+  e.preventDefault();
+  if($('pw').value===ADMIN_PW){sessionStorage.setItem('autoelite_auth','1');$('login').style.display='none';showApp()}
+  else{$('loginErr').textContent='كلمة المرور غير صحيحة'}
+};
+
+function logout(){sessionStorage.removeItem('autoelite_auth');location.reload()}
+
+function showApp(){
+  $('app').classList.remove('hidden');
+  loadAll();
+}
+
+function loadAll(){
+  CARS=API.cars.list();
+  BOOKINGS=API.bookings.list();
+  renderStats();renderCars();renderBookings();renderBrandList();fillSettings();
+}
+
+function renderStats(){
+  const available=CARS.filter(c=>c.status==='available').length;
+  const sold=CARS.filter(c=>c.status==='sold').length;
+  const reserved=CARS.filter(c=>c.status==='reserved').length;
+  const totalValue=CARS.filter(c=>c.status==='available').reduce((s,c)=>s+(+c.price||0),0);
+  const newBookings=BOOKINGS.filter(b=>b.status==='جديد').length;
+  $('stats').innerHTML=`
+    <div class="stat"><div class="l">إجمالي السيارات</div><b>${CARS.length}</b></div>
+    <div class="stat ok"><div class="l">متاحة للبيع</div><b>${available}</b></div>
+    <div class="stat warn"><div class="l">محجوزة</div><b>${reserved}</b></div>
+    <div class="stat info"><div class="l">حجوزات جديدة</div><b>${newBookings}</b></div>
+    <div class="stat"><div class="l">قيمة المخزون</div><b style="font-size:16px">${money(totalValue)}</b></div>`;
+}
+
+function renderBrandList(){
+  const brands=[...new Set(CARS.map(c=>c.brand).filter(Boolean))];
+  $('brandList').innerHTML=brands.map(b=>`<option value="${esc(b)}">`).join('');
+}
+
+function renderCars(){
+  const q=($('cSearch').value||'').toLowerCase();
+  const list=CARS.filter(c=>!q||((c.name||'')+' '+(c.brand||'')+' '+(c.model||'')).toLowerCase().includes(q));
+  const statusMap={available:['ok','متاح'],reserved:['warn','محجوز'],sold:['bad','مباع']};
+  $('cBody').innerHTML=list.length?list.map(c=>{
+    const [cls,txt]=statusMap[c.status]||['','-'];
+    return `<tr>
+      <td>${c.id}</td>
+      <td><div style="display:flex;align-items:center;gap:10px">
+        <div class="td-img">${c.emoji||'🚗'}${c.img?`<img src="${esc(c.img)}" onerror="this.remove()">`:''}</div>
+        <div><b style="display:block;font-size:13px">${esc(c.name)}</b><span style="font-size:11px;color:var(--muted)">${esc(c.model||'')}</span></div>
+      </div></td>
+      <td>${esc(c.brand||'-')}</td>
+      <td>${c.year||'-'}</td>
+      <td><b style="color:var(--accent)">${money(c.price)}</b></td>
+      <td><span class="badge ${cls}">${txt}</span></td>
+      <td style="white-space:nowrap">
+        <button class="btn ghost sm" onclick="editCar(${c.id})">تعديل</button>
+        <button class="btn danger sm" onclick="delCar(${c.id})">حذف</button>
+      </td></tr>`;
+  }).join(''):`<tr><td colspan="7" class="empty-row">لا توجد سيارات</td></tr>`;
+}
+
+function editCar(id){
+  const c=CARS.find(x=>x.id==id);if(!c)return;
+  EDIT_ID=id;
+  $('cName').value=c.name||'';$('cBrand').value=c.brand||'';$('cModel').value=c.model||'';
+  $('cYear').value=c.year||'';$('cPrice').value=c.price??'';$('cOld').value=c.oldPrice||'';
+  $('cMileage').value=c.mileage??0;$('cFuel').value=c.fuel||'بنزين';$('cTrans').value=c.transmission||'أوتوماتيك';
+  $('cColor').value=c.color||'';$('cCond').value=c.condition||'new';$('cStatus').value=c.status||'available';
+  $('cRate').value=c.rate??4.5;$('cEmoji').value=c.emoji||'🚗';$('cImg').value=c.img||'';
+  $('cDesc').value=c.desc||'';$('cFeatures').value=(c.features||[]).join(', ');
+  $('cFeat').checked=!!c.featured;$('cImgFile').value='';
+  $('imgPreview').innerHTML=c.img?`<img src="${esc(c.img)}">`:'';
+  $('formTitle').textContent='✏️ تعديل السيارة';$('saveBtn').textContent='تحديث';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function cancelEdit(){
+  EDIT_ID=null;$('cForm').reset();
+  $('cEmoji').value='🚗';$('cMileage').value=0;$('cRate').value=4.5;
+  $('imgPreview').innerHTML='';
+  $('formTitle').textContent='➕ إضافة سيارة جديدة';$('saveBtn').textContent='حفظ السيارة';
+}
+
+$('cForm').onsubmit=e=>{
+  e.preventDefault();
+  const file=$('cImgFile').files[0];
+  const build=img=>({
+    name:$('cName').value.trim(),brand:$('cBrand').value.trim(),model:$('cModel').value.trim(),
+    year:+$('cYear').value,price:+$('cPrice').value,oldPrice:+$('cOld').value||0,
+    mileage:+$('cMileage').value||0,fuel:$('cFuel').value,transmission:$('cTrans').value,
+    color:$('cColor').value.trim(),condition:$('cCond').value,status:$('cStatus').value,
+    rate:+$('cRate').value||4.5,emoji:$('cEmoji').value.trim()||'🚗',
+    desc:$('cDesc').value.trim(),
+    features:$('cFeatures').value.split(',').map(s=>s.trim()).filter(Boolean),
+    featured:$('cFeat').checked,img
+  });
+  const save=img=>{
+    try{
+      if(EDIT_ID)API.cars.update(EDIT_ID,build(img));
+      else API.cars.create(build(img));
+      toast(EDIT_ID?'تم التحديث ✓':'تمت الإضافة ✓','ok');
+      cancelEdit();loadAll();
+    }catch(err){toast('فشل: '+err.message,'err')}
+  };
+  if(file){
+    if(file.size>2*1024*1024)return toast('الصورة كبيرة (الحد 2MB)','err');
+    const r=new FileReader();r.onload=()=>save(r.result);r.readAsDataURL(file);
+  }else save($('cImg').value.trim());
+};
+
+$('cImgFile').onchange=e=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();r.onload=()=>{$('imgPreview').innerHTML=`<img src="${r.result}">`};r.readAsDataURL(f);
+};
+
+function delCar(id){
+  if(!confirm('حذف السيارة؟'))return;
+  API.cars.remove(id);toast('تم','ok');loadAll();
+}
+
+const BOOKING_STATUSES=['جديد','تم التواصل','مؤكد','ملغي'];
+function renderBookings(){
+  const q=($('bSearch').value||'').toLowerCase();
+  const list=BOOKINGS.filter(b=>!q||((b.customer||'')+' '+(b.phone||'')).toLowerCase().includes(q));
+  $('bBody').innerHTML=list.length?list.map(b=>`
+    <tr>
+      <td>#${String(b.id).slice(-5)}</td>
+      <td>${esc(b.customer)}</td>
+      <td dir="ltr" style="text-align:right">${esc(b.phone)}</td>
+      <td style="font-size:12px">${esc(b.carName||'-')}</td>
+      <td style="font-size:12px;color:var(--muted)">${esc(b.prefDate||'-')}</td>
+      <td><select class="status" onchange="setBookingStatus('${b.id}',this.value)">${BOOKING_STATUSES.map(s=>`<option ${s===b.status?'selected':''}>${s}</option>`).join('')}</select></td>
+      <td style="font-size:11.5px;color:var(--muted)">${esc(b.createdAt||'')}</td>
+      <td><button class="btn danger sm" onclick="delBooking('${b.id}')">✕</button></td>
+    </tr>`).join(''):`<tr><td colspan="8" class="empty-row">لا توجد حجوزات</td></tr>`;
+}
+
+function setBookingStatus(id,status){
+  API.bookings.update(id,{status});
+  const i=BOOKINGS.findIndex(x=>x.id==id);if(i>-1)BOOKINGS[i].status=status;
+  renderStats();toast('تم ✓','ok');
+}
+
+function delBooking(id){
+  if(!confirm('حذف الحجز؟'))return;
+  API.bookings.remove(id);toast('تم','ok');loadAll();
+}
+
+function fillSettings(){
+  $('sName').value=SETTINGS.storeName||'';
+  $('sCurrency').value=SETTINGS.currency||'';
+  $('sWhatsapp').value=SETTINGS.whatsapp||'';
+  $('sPhone').value=SETTINGS.phone||'';
+  $('sAddress').value=SETTINGS.address||'';
+}
+
+$('sForm').onsubmit=e=>{
+  e.preventDefault();
+  SETTINGS=API.settings.save({
+    storeName:$('sName').value.trim()||'AUTO ELITE',
+    currency:$('sCurrency').value.trim()||'أوقية',
+    whatsapp:$('sWhatsapp').value.trim(),
+    phone:$('sPhone').value.trim(),
+    address:$('sAddress').value.trim()
+  });
+  toast('تم الحفظ ✓','ok');renderStats();
+};
+
+document.querySelectorAll('.tab-btn').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');$('tab-'+b.dataset.tab).classList.add('active');
+});
+
+$('cSearch').oninput=renderCars;
+$('bSearch').oninput=renderBookings;
+
+function exportCSV(type){
+  let csv='';
+  if(type==='cars'){
+    csv='الاسم,الماركة,الموديل,السنة,السعر,المسافة,الوقود,الحالة,الحالة البيعية\n';
+    CARS.forEach(c=>csv+=`"${c.name}","${c.brand}","${c.model}",${c.year},${c.price},${c.mileage},"${c.fuel}","${c.condition}","${c.status}"\n`);
+  }else{
+    csv='رقم,العميل,الهاتف,السيارة,التاريخ المفضل,الحالة\n';
+    BOOKINGS.forEach(b=>csv+=`"${b.id}","${b.customer}","${b.phone}","${b.carName}","${b.prefDate||''}","${b.status}"\n`);
+  }
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download=`autoelite_${type}_${Date.now()}.csv`;a.click();
+  toast('تم التصدير ✓','ok');
+}
+
+boot();
+</script>
+</body></html>
